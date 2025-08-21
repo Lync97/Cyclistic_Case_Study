@@ -1,0 +1,60 @@
+---
+title: "Combining Cyclistic Data (July 2024 - June 2025)"
+author: "Lyncold Stephensky CHERY"
+date: "2025-08-06"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+### Install required packages if not already installed
+```{r }
+packages <- c("tidyverse", "janitor", "skimr")
+installed <- packages %in% rownames(installed.packages())
+if (any(!installed)) install.packages(packages[!installed])
+```
+
+### Load libraries
+```{r }
+library(tidyverse)
+library(janitor)
+library(skimr)
+```
+
+### Set the working directory to the folder containing raw CSV files
+```{r }
+setwd("C:/Users/user/Desktop/Cyclistic_Case_Study/data/csv_brut")
+```
+
+### List all CSV files in the folder
+```{r }
+csv_files <- list.files(pattern = "\\.csv$")
+```
+
+### Read and combine all CSV files into one dataframe
+```{r }
+cyclistic_df <- csv_files %>%
+  map_df(read_csv)
+```
+
+### Display the structure of the combined dataset
+```{r }
+str(cyclistic_df)
+```
+
+### Display a statistical summary of the dataset
+```{r }
+skim(cyclistic_df)
+```
+
+### Save the combined dataset to the cleaned data folder
+```{r }
+write_csv(cyclistic_df, "Data_Cyclistic_Jul24_to_Jun25.csv")
+```
+
+### Delete the raw CSV files if necessary
+```{r }
+file.remove(csv_files)
+```

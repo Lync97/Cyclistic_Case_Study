@@ -1,0 +1,467 @@
+# Install required packages if not already installed
+packages <- c("tidyverse", "ggplot2", "scales")
+installed <- packages %in% rownames(installed.packages())
+if (any(!installed)) install.packages(packages[!installed])
+
+# Load libraries
+library(tidyverse)
+library(ggplot2)
+library(scales)
+
+# Disable scientific notation
+options(scipen = 999)
+
+# Import Cyclistic clean data
+cyclistic_df <- read_csv("C:/Users/user/Desktop/Cyclistic_Case_Study/data/csv_data_clean/Cyclistic_Data_Clean_Jul24_to_Jun25.csv")
+
+# Define the order of months from July to June
+month_order <- c("Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
+                 "Jan", "Feb", "Mar", "Apr", "May", "Jun")
+
+# Convert month_of_year to ordered factor
+cyclistic_df <- cyclistic_df %>%
+  mutate(month_of_year = factor(month_of_year,
+                                levels = month_order,
+                                ordered = TRUE))
+
+# Define the order of days from Monday to Sunday
+day_order <- c("Mon", "Tue", "Wed", "Thu",
+               "Fri", "Sat", "Sun")
+
+# Convert day_of_week to ordered factor
+cyclistic_df <- cyclistic_df %>%
+  mutate(day_of_week = factor(day_of_week,
+                              levels = day_order,
+                              ordered = TRUE))
+
+# Creating an ordered factor for the seasons in chronological order
+season_order <- c("Spring", "Summer",
+                  "Fall", "Winter")
+
+# Convert year_seasons to ordered factor
+cyclistic_df <- cyclistic_df %>%
+  mutate(year_seasons = factor(year_seasons,
+                               levels = season_order,
+                               ordered = TRUE))
+
+
+
+# PART A ??? Identify GENERAL TRENDS
+# Change path directory
+setwd("C:/Users/user/Desktop/Cyclistic_Case_Study/Pictures")
+
+# Visualization 1 - User type distribution
+cyclistic_df %>%
+  ggplot(aes(x = member_casual, fill = member_casual)) +
+  geom_bar(position = "dodge") +
+  labs(fill = "User Type",
+       title = "Total per user type : casual vs member",
+       x = "Users",
+       y = "Total Users") +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  scale_y_continuous(labels = label_comma())
+
+# Save image
+ggsave("1_user_type_distribution_chart.png",
+       width = 6,
+       height = 4,
+       dpi = 300)
+
+
+# Visualization 2 - User type distribution
+# Prepare data with percentages
+df_pieer <- cyclistic_df %>%
+  count(member_casual) %>%
+  mutate(
+    pourcentage = round(n / sum(n) * 100, 1),
+    label = paste0(member_casual, "\n", pourcentage, "%")
+  )
+
+df_pieer %>%
+  ggplot(aes(x = "", y = n, fill = member_casual)) +
+  geom_col(width = 1, color = "white") +
+  coord_polar(theta = "y") +
+  geom_text(aes(label = label),
+            position = position_stack(vjust = 0.5),
+            color = "white", size = 4.5) +
+  labs(title = "Total per user type : casual vs member",
+       fill = "") +
+  theme_void() +
+  theme(
+    plot.title = element_text(hjust = 0.5)
+  )
+
+
+# Save image
+ggsave("2_user_type_distribution_pie_chart.png",
+       width = 6,
+       height = 4,
+       dpi = 300)
+
+
+# Visualization 3 - Total number of rides per month (overall volume)
+cyclistic_df %>%
+  ggplot(aes(x = month_of_year)) +
+  geom_bar(fill = "steelblue") +
+  labs(title = "Monthly ride trend",
+       subtitle = "July 2024 to June 2025",
+       x = "Month",
+       y = "Number of rides") +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(hjust = 0.5),
+    plot.subtitle = element_text(hjust = 0.5)
+  ) + scale_y_continuous(labels = label_comma())
+
+# Save image
+ggsave("3_monthly_rides_all_chart.png",
+       width = 6,
+       height = 4,
+       dpi = 300)
+
+
+# Visualization 4 - Number of rides per season
+cyclistic_df %>%
+  ggplot(aes(x = year_seasons, fill = year_seasons)) +
+  labs(fill = "Seasons year",
+       x = "Seasons",
+       y = "Number of Rides",
+       title = "Number of Rides per season") +
+  geom_bar(position = "dodge") +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  scale_y_continuous(labels = label_comma())
+
+# Save image
+ggsave("4_seasonal_rides_all_chart.png",
+       width = 6,
+       height = 4,
+       dpi = 300)
+
+
+# Visualization 5 - Busiest days of the week
+cyclistic_df %>%
+  ggplot(aes(x = day_of_week, fill = day_of_week)) +
+  geom_bar(width = 0.6) +
+  labs(fill = "Days",
+       title = "Number of rides per day of the week",
+       x = "Day",
+       y = "Number of rides") +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  scale_y_continuous(labels = label_comma())
+
+# Save image
+ggsave("5_weekday_rides_all_chart.png",
+       width = 6,
+       height = 4,
+       dpi = 300)
+
+
+# Visualization 6 - Number of rides Weekday vs Weekend
+cyclistic_df %>%
+  ggplot(aes(x = weekend_vs_weekday, fill = weekend_vs_weekday)) +
+  geom_bar(width = 0.6) +
+  labs(fill = "Weekday vs Weekend",
+       title = "Rides during weekday vs weekend",
+       x = "",
+       y = "Number of rides") +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(hjust = 0.5),
+    axis.text.x = element_text(hjust = 0.5)
+  ) +
+  scale_y_continuous(labels = label_comma())
+
+# Save image
+ggsave("6_rides_weekend_vs_weekday_chart.png",
+       width = 6,
+       height = 4,
+       dpi = 300)
+
+
+# Visualization 7 - Create pie chart
+# Prepare data with percentages
+df_pie <- cyclistic_df %>%
+  count(weekend_vs_weekday) %>%
+  mutate(
+    pourcentage = round(n / sum(n) * 100, 1),
+    label = paste0(weekend_vs_weekday, "\n", pourcentage, "%")
+  )
+
+df_pie %>%
+  ggplot(aes(x = "", y = n, fill = weekend_vs_weekday)) +
+  geom_col(width = 1, color = "white") +
+  coord_polar(theta = "y") +
+  geom_text(aes(label = label),
+            position = position_stack(vjust = 0.5),
+            color = "white", size = 4.5) +
+  labs(title = "Ride distribution: weekday vs weekend",
+       fill = "") +
+  theme_void() +
+  theme(
+    plot.title = element_text(hjust = 0.5)
+  )
+
+# Save image
+ggsave("7_rides_share_weekend_vs_weekday_pie_chart.png",
+       width = 6,
+       height = 4,
+       dpi = 300)
+
+
+# Visualization 8 - Number of rides per hour
+cyclistic_df %>%
+  ggplot(aes(x = hour_of_day, fill = member_casual)) +
+  geom_bar(position = "dodge") +
+  labs(fill = "User Type",
+       x = "Hour",
+       y = "Hourly ride number",
+       title = "Hourly ride numbers in a week") +
+  facet_wrap(~day_of_week) +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  scale_y_continuous(labels = label_comma())
+
+# Save image
+ggsave("8_hourly_rides_per_day_user_type_chart.png",
+       width = 6,
+       height = 4,
+       dpi = 300)
+
+
+# Visualization 9 - Most popular hours of the day
+cyclistic_df %>%
+  ggplot(aes(x = hour_of_day)) +
+  geom_density(fill = "steelblue", size = 0.8) +
+  labs(
+    title = "Traffic by hour of day",
+    subtitle = "From 00:00 to 23:00",
+    x = "Hours",
+    y = "Traffic concentration"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(hjust = 0.5),
+    plot.subtitle = element_text(hjust = 0.5)
+  )
+
+# Save image
+ggsave("9_hourly_traffic_density_chart.png",
+       width = 6,
+       height = 4,
+       dpi = 300)
+
+
+# Visualization 10 - Bike usage frequencies
+cyclistic_df %>%
+  ggplot(aes(x = rideable_type, fill = rideable_type)) +
+  geom_bar(position = "dodge") +
+  labs(fill = "Bike Type",
+       x = "Bike",
+       y = "Number of bikes",
+       title = "Bike usage trends") +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  scale_y_continuous(labels = label_comma())
+
+# Save image
+ggsave("10_bike_type_usage_chart.png",
+       width = 6,
+       height = 4,
+       dpi = 300)
+
+
+
+# PART B ??? User Type Analysis
+# Visualization 11 - Number of rides per month
+cyclistic_df %>%
+  ggplot(aes(x = month_of_year, fill = member_casual)) +
+  geom_bar(position = "dodge") +
+  labs(fill = "User Type",
+       x = "Month",
+       y = "Total of rides",
+       title = "Number of rides per month",
+       subtitle = "July 2024 to June 2025") +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(hjust = 0.5),
+    plot.subtitle = element_text(hjust = 0.5)) +
+  scale_y_continuous(labels = label_comma())
+
+# Save image
+ggsave("11_monthly_rides_by_user_type_chart.png",
+       width = 6,
+       height = 4,
+       dpi = 300)
+
+
+# Visualization 12 - Rides per season and user type
+cyclistic_df %>%
+  ggplot(aes(x = year_seasons, fill = member_casual)) +
+  labs(fill = "User Type",
+       x = "Seasons",
+       y = "Number of Rides",
+       title = "Number of Rides per season",
+       subtitle = "Members preference season") +
+  geom_bar(position = "dodge") +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(hjust = 0.5),
+    plot.subtitle = element_text(hjust = 0.5)) +
+  scale_y_continuous(labels = label_comma())
+
+# Save image
+ggsave("12_seasonal_rides_by_user_type_chart.png",
+       width = 6,
+       height = 4,
+       dpi = 300)
+
+
+# Visualization 13 - Weekday usage by user type
+cyclistic_df %>%
+  ggplot(aes(x = day_of_week, fill = member_casual)) +
+  geom_bar(position = "dodge") +
+  labs(fill = "User Type",
+       title = "Usage per days of week",
+       x = "Days",
+       y = "Number of rides") +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  scale_y_continuous(labels = label_comma())
+
+# Save image
+ggsave("13_weekday_rides_by_user_type_chart.png",
+       width = 6,
+       height = 4,
+       dpi = 300)
+
+
+# Visualization 14 - Rides per user type: Weekday vs Weekend
+cyclistic_df %>%
+  count(member_casual, weekend_vs_weekday) %>%
+  ggplot(aes(x = weekend_vs_weekday, y = n, fill = member_casual)) +
+  geom_col(position = "dodge", width = 0.6) +
+  labs(fill = "User Type",
+       title = "Rides by user type on weekday and weekend",
+       x = "Weekday vs weekend",
+       y = "Number of rides") +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  scale_y_continuous(labels = label_comma())
+
+# Save image
+ggsave("14_rides_weekend_vs_weekday_by_user_type_chart.png",
+       width = 6,
+       height = 4,
+       dpi = 300)
+
+
+# Visualization 15 - Preferred bike type by user
+cyclistic_df %>%
+  count(member_casual, rideable_type) %>%
+  ggplot(aes(x = rideable_type, y = n, fill = member_casual)) +
+  geom_col(position = "dodge", width = 0.6) +
+  labs(fill = "User Type",
+       title = "Bike type used by user type",
+       x = "Bike type",
+       y = "Number of rides") +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  scale_y_continuous(labels = label_comma())
+
+# Save image
+ggsave("15_bike_type_by_user_type_chart.png",
+       width = 6,
+       height = 4,
+       dpi = 300)
+
+
+# Visualization 16 - Usage by hour per user type
+cyclistic_df %>%
+  count(member_casual, hour_of_day) %>%
+  ggplot(aes(x = hour_of_day, y = n, color = member_casual, group = member_casual)) +
+  geom_line(size = 1) +
+  labs(color = "User Type",
+       title = "Hourly ride distribution",
+       subtitle = "From 00:00 to 23:00",
+       x = "Hour",
+       y = "Number of rides") +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5),
+        plot.subtitle = element_text(hjust = 0.5)) +
+  scale_y_continuous(labels = label_comma())
+
+# Save image
+ggsave("16_hourly_rides_by_user_type_line_chart.png",
+       width = 6,
+       height = 4,
+       dpi = 300)
+
+
+# Visualization 17 - Area chart per hour per user
+cyclistic_df %>%
+  count(member_casual, hour_of_day) %>%
+  ggplot(aes(x = hour_of_day, y = n, fill = member_casual)) +
+  geom_area(position = "stack", alpha = 0.6) +
+  labs(fill = "User Type",
+       title = "Rides per hour by type (stacked area)",
+       subtitle = "From 00:00 to 23:00",
+       x = "Hour",
+       y = "Number of rides") +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5),
+        plot.subtitle = element_text(hjust = 0.5)) +
+  scale_y_continuous(labels = label_comma())
+
+# Save image
+ggsave("17_hourly_rides_by_user_type_area_chart.png",
+       width = 6,
+       height = 4,
+       dpi = 300)
+
+
+# Visualization 18 - Average ride duration per user type
+cyclistic_df %>%
+  group_by(member_casual) %>%
+  summarise(duree_moyenne = mean(ride_duration, na.rm = TRUE)) %>%
+  ggplot(aes(x = member_casual, y = duree_moyenne, fill = member_casual)) +
+  geom_col(width = 0.6) +
+  labs(fill = "User Type",
+       title = "Average ride duration per user type",
+       x = "User Type",
+       y = "Average duration (min)") +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5))
+
+# Save image
+ggsave("18_average_ride_duration_by_user_type_chart.png",
+       width = 6,
+       height = 4,
+       dpi = 300)
+
+
+
+# Finding the most popular start stations among all users
+View (cyclistic_df %>%
+        filter(start_station_name != "unknown_name") %>%
+        group_by(start_station_name) %>%
+        summarise(count = n()) %>%
+        arrange(desc(count)))
+
+
+# Finding the most popular start stations for casual users only
+View (cyclistic_df %>%
+        filter(member_casual == 'casual', start_station_name != "unknown_name" ) %>%
+        group_by(member_casual, start_station_name) %>%
+        summarise(count = n()) %>%
+        arrange(desc(count)))
+
+
+# Finding the most popular start stations for members only
+View (cyclistic_df %>%
+        filter(member_casual == 'member', start_station_name != "unknown_name") %>%
+        group_by(member_casual, start_station_name) %>%
+        summarise(count = n()) %>%
+        arrange(desc(count)))
