@@ -8,6 +8,8 @@ I recently earned the **Google Data Analytics Professional** certification on Co
 
 For this analysis, I used **RStudio** and **Tableau** for data processing, analysis, and visualization. The study follows the **six steps of the data analysis process**: _Ask_, _Prepare_, _Process_, _Analyze_, _Share_, and _Act_.
 
+> **Note:** The project contains a large dataset in the `data/` folder (over 2GB), which has not been uploaded to GitHub due to size limitations. You can access the data directly from the [Divvy Bike Share](https://divvy-tripdata.s3.amazonaws.com/index.html) website or contact me for access to the raw data.
+
 ---
 
 ## Behavioral Analysis of Cyclistic Users
