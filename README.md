@@ -1,1 +1,267 @@
-# Cyclistic_Case_Study
+# RStudio: Cyclistic Bike Share Case Study (July 2024 to June 2025)
+**Author**: Lyncold Stephensky CHERY  
+**Date**: 2025-08-04
+
+## Introduction
+
+I recently earned the **Google Data Analytics Professional** certification on Coursera — an exceptional, enriching, and engaging course made up of eight modules spread over several weeks. At the end, several case studies were proposed. This article presents one of them, focused on solving a problem for the **Cyclistic** marketing team, a fictional bike-sharing company in Chicago.
+
+For this analysis, I used **RStudio** and **Tableau** for data processing, analysis, and visualization. The study follows the **six steps of the data analysis process**: _Ask_, _Prepare_, _Process_, _Analyze_, _Share_, and _Act_.
+
+---
+
+## Behavioral Analysis of Cyclistic Users
+
+### Study Context
+
+Cyclistic aims to increase the conversion of casual riders into annual members. To support this initiative, I analyzed usage data from the past 12 months to identify behavioral differences between members and casual riders.
+
+### Analysis Objectives
+
+- Compare usage patterns between members and casual riders  
+- Identify temporal trends (hours, days, months)  
+- Provide actionable insights to the marketing team for decision-making
+
+### Methodology and Tools
+
+- **Language**: R  
+- **Packages**: `tidyverse`, `janitor`, `skimr`, `ggplot2`, `scales`  
+- **Key steps**:
+  - Importing and merging 12 monthly CSV files  
+    [See script](./scripts/combine_data.R)
+  - Data cleaning  
+    [See script](./scripts/cleaning_data.R)
+  - Creating derived variables: `month_order`, `day_order`, `season_order`
+  - Creating new columns:
+    - `ride_duration`  
+    - `day_of_week`  
+    - `month_of_year`  
+    - `weekend_vs_weekday`  
+    - `hour_of_day`  
+    - `year_seasons`
+  - Visualizing user behaviors with `ggplot2`  
+    [See script](./scripts/visualization.R)
+
+---
+
+## The 6 Steps of the Data Analysis Process
+
+### 1. ASK
+
+The Cyclistic marketing director posed three key questions:
+
+1. How do annual members and casual riders use Cyclistic bikes differently?  
+2. Why would casual riders buy an annual membership?  
+3. How can Cyclistic use digital media to encourage this conversion?
+
+---
+
+### 2. PREPARE
+
+The data comes from [Divvy Bike Share](https://divvy-tripdata.s3.amazonaws.com/index.html), covering the period from July 2024 to June 2025.  
+The 12 CSV files were renamed (`2024_07.csv`, `2024_08.csv`, etc.) and stored in the `data/csv_raw` folder.
+
+---
+
+### 3. PROCESS
+
+With over 5.5 million rows, **RStudio** is more suitable than a standard spreadsheet.
+
+Before importing the files into RStudio, I installed all necessary packages (see [Methodology and Tools](#methodology-and-tools)).
+
+#### Processing Steps
+
+1. Clean column names: `clean_names()`  
+2. Remove empty columns/rows: `remove_empty()`  
+3. Remove duplicates: `distinct()`  
+4. Drop unnecessary columns (IDs, coordinates, etc.)  
+5. Check for missing values: `colSums(is.na())`  
+6. Replace `NA` with `"unknown_name"`  
+7. Descriptive statistics: `skim_without_charts()`  
+8. Create `ride_duration` (in minutes)  
+9. Remove rides < 1 min or > 24 hours  
+10. Create derived columns: day, month, hour, etc.  
+11. Export cleaned data: `Cyclistic_Data_Clean_Jul24_to_Jun25.csv`
+
+#### Summary (before/after cleaning)
+
+| Detail            | Number of Rows |
+|-------------------|----------------|
+| Before cleaning   | 5,597,030      |
+| After cleaning    | 5,423,861      |
+| Rows removed      | 173,169        |
+
+#### Ride Duration by User Type
+
+| User Type | Max Duration (min) | Min Duration (min) |
+|-----------|--------------------|--------------------|
+| Casual    | 1,439              | 2                  |
+| Member    | 1,437              | 2                  |
+
+---
+
+## 4. ANALYZE AND SHARE
+
+### A. General Trends
+
+#### User Type Distribution
+
+![User type](./pictures/1_user_type_distribution_chart.png)  
+![User type pie](./pictures/2_user_type_distribution_pie_chart.png)
+
+➤ About **36.3%** of rides are by casual riders — a strong conversion potential.
+
+#### Monthly Traffic Distribution
+
+![Monthly](./pictures/3_monthly_rides_all_chart.png)
+
+➤ High traffic from **July to October 2024**, decline until **February 2025**, then recovery.
+
+#### Seasonal Distribution
+
+![Seasons](./pictures/4_seasonal_rides_all_chart.png)
+
+➤ Peak activity in **summer** and **fall**, sharp drop in winter (unfavorable weather).
+
+#### Weekly Distribution
+
+![Weekdays](./pictures/5_weekday_rides_all_chart.png)
+
+➤ **Saturday** is the busiest day, **Sunday** the least.  
+➤ Regular weekday usage.
+
+#### Week vs Weekend
+
+![Week/weekend bar](./pictures/6_rides_weekend_vs_weekday_chart.png)  
+![Week/weekend pie](./pictures/7_rides_share_weekend_vs_weekday_pie_chart.png)
+
+➤ **71.4%** of rides occur on weekdays, **28.6%** on weekends.
+
+#### Hourly Distribution
+
+![Hourly by day and type](./pictures/8_hourly_rides_per_day_user_type_chart.png)
+
+➤ Weekdays: peaks at **08:00** and **17:00** (commuting).  
+➤ Weekends: steady flow between **08:00** and **20:00**.
+
+#### Hourly Density
+
+![Hourly density](./pictures/9_hourly_traffic_density_chart.png)
+
+➤ High concentration between **07:00** and **20:00**, peaks at **08:00** and **16:00–18:00**.
+
+#### Bike Type Distribution
+
+![Bike type](./pictures/10_bike_type_usage_chart.png)
+
+➤ **Electric bikes** dominate, followed by **classic bikes**. Scooters are rarely used.
+
+---
+
+### B. Analysis by User Type
+
+#### Monthly Distribution
+
+![Monthly by type](./pictures/11_monthly_rides_by_user_type_chart.png)
+
+➤ Both groups follow similar seasonal patterns, with members riding more.
+
+#### Seasonal Distribution
+
+![Seasonal by type](./pictures/12_seasonal_rides_by_user_type_chart.png)
+
+➤ **Summer** is the most active period for all.  
+➤ **Winter** is the slowest.
+
+#### Weekly Distribution
+
+![Weekdays by type](./pictures/13_weekday_rides_by_user_type_chart.png)
+
+➤ Members: active **Monday to Friday**  
+➤ Casuals: active **on weekends**, especially **Saturday**
+
+#### Week vs Weekend
+
+![Week/weekend by type](./pictures/14_rides_weekend_vs_weekday_by_user_type_chart.png)
+
+➤ Members ride mainly on weekdays.
+
+#### Bike Type by User
+
+![Bike type by user](./pictures/15_bike_type_by_user_type_chart.png)
+
+➤ Both groups prefer **electric bikes**, followed by **classic bikes**. Low interest in scooters.
+
+#### Hourly Distribution
+
+![Line](./pictures/16_hourly_rides_by_user_type_line_chart.png)  
+![Area](./pictures/17_hourly_rides_by_user_type_area_chart.png)
+
+➤ Peak hours at **08:00** and **17:00**.
+
+#### Average Ride Duration
+
+![Average duration](./pictures/18_average_ride_duration_by_user_type_chart.png)
+
+➤ **Casual**: ~20 minutes  
+➤ **Members**: ~14 minutes
+
+---
+
+## 5. ANALYZE AND SHARE (Tableau)
+
+The data cleaned in R was also visualized in **Tableau Public**.  
+[View the full dashboard](https://public.tableau.com/app/profile/lyncold.stephensky.chery/viz/CyclisticBikeShareCaseStudyFromJuly2024toJune2025/CyclisticBikeShareCaseStudyJuly2024toJune2025)
+
+---
+
+## 6. ACT: Marketing Recommendations
+
+### Key Findings
+
+- **Usage frequency**: members ride mostly on weekdays, casual riders mostly on weekends.  
+- **Ride duration**: longer for casual riders (leisure/tourism).  
+- **Peak times**: 08:00 and 17:00, especially on weekdays.  
+- **Seasonality**: highest in **summer** and **fall**.  
+- **Bike type**: **electric bikes** are most popular.
+
+---
+
+### Marketing Recommendations
+
+#### 1. Target casual riders with summer promotions
+
+- Launch **seasonal marketing campaigns** between **May and September**, when activity is highest.  
+- Offer **temporary discounts**, **free trials**, or **flexible memberships** (monthly, quarterly).  
+- Adapt marketing messages to **leisure** and **tourism** use (weekends, holidays, urban exploration).
+
+#### 2. Drive conversion with incentives and rewards
+
+- Offer **sign-up bonuses** or **discounts on the first months** of membership.  
+- Create a **loyalty** and **referral program** to reward engaged users.  
+- Add **exclusive benefits** for members: priority access to certain bikes, community events, challenges.
+
+#### 3. Optimize weekend user experience
+
+- Increase **visibility and availability** of bikes in high weekend-traffic areas: **parks**, **tourist zones**, **leisure centers**, **waterfronts**, etc.  
+- Adjust maintenance and station restocking schedules based on Saturday peaks.
+
+#### 4. Focus on electric bikes
+
+- Invest in **maintenance**, **geographic distribution**, and **availability** of electric bikes, which are very popular.  
+- Promote their benefits (fast, easy to use, less effort) in marketing campaigns.
+
+#### 5. Personalize digital communication
+
+- Use targeted content (emails, social media, blog) based on:  
+  - **time of day** (e.g., morning campaigns),  
+  - **day of week** (weekday vs weekend),  
+  - **season**.  
+- Create **user segments** to tailor messages to profiles (casual vs member, frequency, ride duration, etc.).
+
+---
+
+## License
+
+This project was carried out for educational purposes as part of a case study.  
+Data comes from **Divvy / Lyft** and is shared under an open license.
