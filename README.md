@@ -1,12 +1,20 @@
-# RStudio: Cyclistic Bike Share Case Study (July 2024 to June 2025)
+# Cyclistic Bike Share Case Study (July 2024 to June 2025)
+
+Data analysis project using **R**, **RStudio**, **Tableau Public**, and publicly available bike-share data to analyze rider behavior, identify trends, and generate business insights.
+
 **Author**: Lyncold Stephensky CHERY  
 **Date**: 2025-08-04
 
 ## Introduction
 
-I recently earned the **Google Data Analytics Professional** certification on Coursera — an exceptional, enriching, and engaging course made up of eight modules spread over several weeks. At the end, several case studies were proposed. This article presents one of them, focused on solving a problem for the **Cyclistic** marketing team, a fictional bike-sharing company in Chicago.
+I recently earned the **Google Data Analytics Professional Certificate** on Coursera. This project is a case study focused on helping the **Cyclistic** marketing team understand how annual members and casual riders use bikes differently.
 
-For this analysis, I used **RStudio** and **Tableau** for data processing, analysis, and visualization. The study follows the **six steps of the data analysis process**: _Ask_, _Prepare_, _Process_, _Analyze_, _Share_, and _Act_.
+The goal of this analysis is to explore rider behavior, discover usage patterns, and provide data-driven recommendations to increase casual rider conversion into annual members.
+
+For this analysis, I used **RStudio** for data cleaning, processing, analysis, and visualization, and **Tableau Public** for dashboard creation.
+
+The project follows the **six steps of the data analysis process**:
+_Ask_, _Prepare_, _Process_, _Analyze_, _Share_, and _Act_.
 
 > **Note:** The project contains a large dataset in the `data/` folder (over 2GB), which has not been uploaded to GitHub due to size limitations. You can access the data directly from the [Divvy Bike Share](https://divvy-tripdata.s3.amazonaws.com/index.html) website or contact me for access to the raw data.
 
